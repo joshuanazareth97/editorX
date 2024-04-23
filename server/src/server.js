@@ -10,6 +10,8 @@ import documentRouter from "./routes/document.js";
 import userRouter from "./routes/user.js";
 import settings from "./settings.js";
 import { setPersistence, setupWSConnection } from "./db-utils.js";
+import path from "path";
+import { fileURLToPath } from "url";
 
 // HTTP Setup
 const app = express();
@@ -61,17 +63,25 @@ setPersistence({
   },
 });
 
-// in production, serve static files from the React app
-if (process.env.NODE_ENV === "production") {
-  app.use(expressStatic("client/build"));
-}
-
 app.get("/ping", (req, res) => {
   res.send("Pong");
 });
-
 app.use("/api/user", userRouter);
 app.use("/api/document", documentRouter);
+
+// in production, serve static files from the React app
+if (process.env.NODE_ENV === "production") {
+  const __dirname = path.dirname(fileURLToPath(import.meta.url));
+  app.use(express.static(path.join(__dirname, "../client/build")));
+
+  console.log(
+    `Serving static files from ${path.join(__dirname, "../client/build")}`
+  );
+  // Handles any requests that don't match the ones above
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "../client/build/index.html"));
+  });
+}
 
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

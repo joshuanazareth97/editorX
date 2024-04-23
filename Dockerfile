@@ -10,8 +10,8 @@ RUN yarn build
 FROM node:18
 WORKDIR /app
 COPY --from=build /app/build ./client/build
-COPY ./server/package.json ./server/yarn.lock ./
+COPY server/package.json server/yarn.lock ./
 RUN yarn install --production
 COPY server/ .
-EXPOSE 5000
+EXPOSE 3001
 CMD [ "node", "." ]
