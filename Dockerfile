@@ -4,6 +4,8 @@ WORKDIR /app
 COPY client/package.json client/yarn.lock ./
 RUN yarn install
 COPY client/ .
+ARG WS_CONN_STRING
+ENV REACT_APP_WS_CONN_STRING=$WS_CONN_STRING
 RUN yarn build
 
 # Stage 2: Serve UI and API Routes

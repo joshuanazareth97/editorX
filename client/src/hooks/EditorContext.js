@@ -13,11 +13,9 @@ export const EditorProvider = ({ children }) => {
     if (!documentId) return;
     const doc = new Y.Doc();
     const yText = doc.getText("quill");
-    const wsProvider = new WebsocketProvider(
-      "ws://172.20.204.100:3001",
-      documentId,
-      doc
-    );
+    const wsConnString =
+      process.env.REACT_APP_WS_CONN_STRING || "ws://172.20.204.100:3001";
+    const wsProvider = new WebsocketProvider(wsConnString, documentId, doc);
     wsProvider.on("status", (event) => {
       console.log(event.status); // logs "connected" or "disconnected"
     });
